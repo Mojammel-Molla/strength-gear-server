@@ -1,9 +1,10 @@
-import express, { Request, Response } from 'express';
-const app = express();
-const port = 3000;
+import express, { Request, Response } from 'express'
+import { ProductRoutes } from './app/modules/product/product.route'
+const app = express()
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
-});
+  res.send('Strength Gear!')
+})
+app.use('/product', ProductRoutes)
 
-export default app;
+export default app
