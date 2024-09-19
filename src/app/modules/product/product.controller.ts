@@ -1,52 +1,49 @@
-import { RequestHandler } from 'express'
-import { ProductServices } from './product.service'
+import { TProduct } from './product.interface'
+import ProductModel from './product.model'
 
-const createProduct: RequestHandler = async (req, res) => {
-  try {
-    const newProduct = req.body
-    console.log('This is request', newProduct)
-    const result = await ProductServices.createProductIntoDB(newProduct)
-
-    res.status(200).json({
-      success: true,
-      message: 'Product created successfully',
-      data: result,
-    })
-  } catch (err) {
-    console.log(err)
-  }
+// Service to create a new product in the database
+const createProductIntoDB = async (payload: TProduct) => {
+  const result = await ProductModel.create(payload)
+  return result
 }
 
-const getAllProducts: RequestHandler = async (req, res) => {
-  try {
-    const result = await ProductServices.getAllProductsFromDB()
-
-    res.status(200).json({
-      success: true,
-      message: 'All Products retrieve successfully',
-      data: result,
-    })
-  } catch (err) {
-    console.log(err)
-  }
+// Service to get all products from the database
+const getAllProductsFromDB = async () => {
+  const result = await ProductModel.find()
+  return result
 }
 
-const getSingleProduct: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params
-    const result = await ProductServices.getSingleProductFromDB(id)
-    res.status(200).json({
-      success: true,
-      message: 'Single Product retrieve successfully',
-      data: result,
-    })
-  } catch (err) {
-    console.log(err)
-  }
+// Service to get a single product by its ID from the database
+const getSingleProductFromDB = async (id: string) => {
+  const result = await ProductModel.findOne({ _id: id })
+  return result
 }
 
-export const ProductControllers = {
-  createProduct,
-  getAllProducts,
-  getSingleProduct,
+// Service to update a product by its ID
+const updateProductInDB = async (
+  id: string,
+  updatedData: Partial<TProduct>
+) => {
+  const result = await ProductModel.findByIdAndUpdate(id, updatedData, {
+    new: true,
+  })
+  return result
+}
+
+// Service to delete a product by its ID
+const deleteProductFromDB = async (id: string) => {
+  const result = await ProductModel.findByIdAndUpdate(id, {
+    isDeleted: true,
+    new: true,
+  })
+  return result
+}
+
+// Exporting all product services
+export const ProductServices = {
+  createProductIntoDB,
+  getAllProductsFromDB,
+  getSingleProductFromDB,
+  updateProductInDB,
+  deleteProductFromDB,
 }
