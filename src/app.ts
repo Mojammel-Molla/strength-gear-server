@@ -5,6 +5,6 @@ const app = express()
 app.get('/', (req: Request, res: Response) => {
   res.send('Strength Gear!')
 })
-app.use('/product', ProductRoutes)
+app.use('/api', ProductRoutes)
 
 export default app

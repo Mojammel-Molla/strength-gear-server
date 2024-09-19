@@ -1,8 +1,13 @@
+import { TCart } from './cart.interface'
 import { Schema, model } from 'mongoose'
-import { TProduct } from './product.interface'
 
-const productSchema = new Schema<TProduct>(
+// Define the cart schema
+const cartSchema = new Schema<TCart>(
   {
+    id: {
+      type: String,
+      required: [true, 'Product ID is required'],
+    },
     name: {
       type: String,
       required: [true, 'Product name is required'],
@@ -25,7 +30,7 @@ const productSchema = new Schema<TProduct>(
     },
     inStock: {
       type: Boolean,
-      default: true,
+      required: [true, 'Stock availability is required'],
     },
   },
   {
@@ -33,7 +38,7 @@ const productSchema = new Schema<TProduct>(
   }
 )
 
-// Create and export the Product model
-const ProductModel = model<TProduct>('Product', productSchema)
+// Create and export the Cart model
+const CartModel = model<TCart>('Cart', cartSchema)
 
-export default ProductModel
+export default CartModel
