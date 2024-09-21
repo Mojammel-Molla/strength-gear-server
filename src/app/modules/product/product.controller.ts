@@ -1,49 +1,117 @@
-import { TProduct } from './product.interface'
-import ProductModel from './product.model'
-
-// Service to create a new product in the database
-const createProductIntoDB = async (payload: TProduct) => {
-  const result = await ProductModel.create(payload)
-  return result
+import { Request, Response } from 'express'
+import { ProductServices } from './product.service'
+const createProduct = async (req: Request, res: Response) => {
+  try {
+    const productData = req.body
+    const result = await ProductServices.createProductIntoDB(productData)
+    return res.status(201).json({
+      success: true,
+      message: 'Product created successfully',
+      data: result,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to create product',
+      error: error,
+    })
+  }
 }
 
-// Service to get all products from the database
-const getAllProductsFromDB = async () => {
-  const result = await ProductModel.find()
-  return result
+const getAllProducts = async (req: Request, res: Response) => {
+  try {
+    const result = await ProductServices.getAllProductsFromDB()
+    return res.status(200).json({
+      success: true,
+      message: 'All products fetched successfully',
+      data: result,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch products',
+      error: error,
+    })
+  }
 }
 
-// Service to get a single product by its ID from the database
-const getSingleProductFromDB = async (id: string) => {
-  const result = await ProductModel.findOne({ _id: id })
-  return result
+const getProductById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const result = await ProductServices.getSingleProductFromDB(id)
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      })
+    }
+    return res.status(200).json({
+      success: true,
+      message: 'Product fetched successfully',
+      data: result,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch product',
+      error: error,
+    })
+  }
 }
 
-// Service to update a product by its ID
-const updateProductInDB = async (
-  id: string,
-  updatedData: Partial<TProduct>
-) => {
-  const result = await ProductModel.findByIdAndUpdate(id, updatedData, {
-    new: true,
-  })
-  return result
+const updateProduct = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const productData = req.body
+    const result = await ProductServices.updateProductInDB(id, productData)
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      })
+    }
+    return res.status(200).json({
+      success: true,
+      message: 'Product updated successfully',
+      data: result,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update product',
+      error: error,
+    })
+  }
 }
 
-// Service to delete a product by its ID
-const deleteProductFromDB = async (id: string) => {
-  const result = await ProductModel.findByIdAndUpdate(id, {
-    isDeleted: true,
-    new: true,
-  })
-  return result
+const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const result = await ProductServices.deleteProductFromDB(id)
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      })
+    }
+    return res.status(200).json({
+      success: true,
+      message: 'Product deleted successfully',
+      data: result,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to delete product',
+      error: error,
+    })
+  }
 }
 
-// Exporting all product services
-export const ProductServices = {
-  createProductIntoDB,
-  getAllProductsFromDB,
-  getSingleProductFromDB,
-  updateProductInDB,
-  deleteProductFromDB,
+export const ProductControllers = {
+  createProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
 }

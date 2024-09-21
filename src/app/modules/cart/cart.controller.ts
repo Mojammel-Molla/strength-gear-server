@@ -1,43 +1,94 @@
-import { TCart } from './cart.interface'
-import CartModel from './cart.model'
+import { Request, Response } from 'express'
+import { CartServices } from './cart.service'
 
-// Service to create a new cart item in the database
-const addProductToCart = async (payload: TCart) => {
-  const result = await CartModel.create(payload)
-  return result
+const addToCart = async (req: Request, res: Response) => {
+  try {
+    const cartItemData = req.body
+    console.log('This is cart data', cartItemData)
+    const result = await CartServices.addToCartInDB(cartItemData)
+    return res.status(200).json({
+      success: true,
+      message: 'Item added to cart successfully',
+      data: result,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to add item to cart',
+      error: error,
+    })
+  }
 }
 
-// Service to get all cart items from the database
-const getAllCartItemsFromDB = async () => {
-  const result = await CartModel.find()
-  return result
+const getCartItems = async (req: Request, res: Response) => {
+  try {
+    const result = await CartServices.getAllCartItemsFromDB()
+    return res.status(200).json({
+      success: true,
+      message: 'Cart items fetched successfully',
+      data: result,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch cart items',
+      error: error,
+    })
+  }
 }
 
-// Service to get a single cart item by its ID from the database
-const getSingleCartItemFromDB = async (id: string) => {
-  const result = await CartModel.findOne({ _id: id })
-  return result
+const updateCartItemQuantity = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const { quantity } = req.body
+    const result = await CartServices.updateCartItemInDB(id, quantity)
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'Cart item not found',
+      })
+    }
+    return res.status(200).json({
+      success: true,
+      message: 'Cart item quantity updated successfully',
+      data: result,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update cart item quantity',
+      error: error,
+    })
+  }
 }
 
-// Service to remove a cart item by its ID
-const removeCartItemFromDB = async (id: string) => {
-  const result = await CartModel.findByIdAndDelete(id)
-  return result
+const removeCartItem = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const result = await CartServices.removeCartItemFromDB(id)
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'Cart item not found',
+      })
+    }
+    return res.status(200).json({
+      success: true,
+      message: 'Cart item removed successfully',
+      data: result,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to remove cart item',
+      error: error,
+    })
+  }
 }
 
-// Service to update the quantity or details of a cart item by its ID
-const updateCartItemInDB = async (id: string, updatedData: Partial<TCart>) => {
-  const result = await CartModel.findByIdAndUpdate(id, updatedData, {
-    new: true, // Return the updated document
-  })
-  return result
-}
-
-// Exporting all cart services
-export const CartServices = {
-  addProductToCart,
-  getAllCartItemsFromDB,
-  getSingleCartItemFromDB,
-  removeCartItemFromDB,
-  updateCartItemInDB,
+export const CartControllers = {
+  addToCart,
+  updateCartItemQuantity,
+  removeCartItem,
+  getCartItems,
 }

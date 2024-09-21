@@ -1,10 +1,14 @@
-import express, { Request, Response } from 'express'
+import express, { Application, Request, Response } from 'express'
 import { ProductRoutes } from './app/modules/product/product.route'
-const app = express()
+import { CartRoutes } from './app/modules/cart/cart.route'
+const app: Application = express()
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Strength Gear!')
+  res.send('Welcome to Strength Gear!')
 })
+
+app.use(express.json())
 app.use('/api', ProductRoutes)
+app.use('/api', CartRoutes)
 
 export default app

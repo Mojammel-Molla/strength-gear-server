@@ -39,6 +39,4 @@ const cartSchema = new Schema<TCart>(
 )
 
 // Create and export the Cart model
-const CartModel = model<TCart>('Cart', cartSchema)
-
-export default CartModel
+export const CartModel = model<TCart>('Cart', cartSchema)
