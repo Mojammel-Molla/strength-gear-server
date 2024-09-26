@@ -6,7 +6,6 @@ const cartSchema = new Schema<TCart>(
   {
     id: {
       type: String,
-      required: [true, 'Product ID is required'],
     },
     name: {
       type: String,
@@ -31,6 +30,10 @@ const cartSchema = new Schema<TCart>(
     inStock: {
       type: Boolean,
       required: [true, 'Stock availability is required'],
+    },
+    quantity: {
+      type: Number,
+      required: [true, 'Product quantity is required'],
     },
   },
   {

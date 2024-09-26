@@ -3,6 +3,11 @@ import { CartModel } from './cart.model'
 
 // Service to add a new item to the cart in the database
 const addToCartInDB = async (payload: TCart) => {
+  const existingProduct = await CartModel.findOne({ name: payload.name })
+
+  if (existingProduct) {
+    throw new Error('Product with this name already exists')
+  }
   const result = await CartModel.create(payload)
   return result
 }

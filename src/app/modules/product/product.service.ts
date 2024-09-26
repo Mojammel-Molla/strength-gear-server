@@ -3,6 +3,12 @@ import ProductModel from './product.model'
 
 // Service to create a new product in the database
 const createProductIntoDB = async (payload: TProduct) => {
+  const existingProduct = await ProductModel.findOne({ name: payload.name })
+
+  if (existingProduct) {
+    throw new Error('Product with this name already exists')
+  }
+
   const result = await ProductModel.create(payload)
   return result
 }
